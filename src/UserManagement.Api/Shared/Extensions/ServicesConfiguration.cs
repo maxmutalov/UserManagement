@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Serilog;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using UserManagement.Api.Database;
 using UserManagement.Api.Shared.Authentication;
 using UserManagement.Api.Shared.Entities;
+using UserManagement.Api.Shared.Middlewares;
 using UserManagement.Api.Shared.Options;
 using UserManagement.Api.Shared.Repositories;
 
@@ -35,13 +36,12 @@ namespace UserManagement.Api.Shared.Extensions
                 options.UseNpgsql(connectionString, options =>
                 {
                     options.MigrationsHistoryTable(HistoryRepository.DefaultTableName);
-                })
-                .UseSnakeCaseNamingConvention();
+                });
+                //.UseSnakeCaseNamingConvention();
             });
 
-            services.AddIdentityCore<User>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
 
             services.ConfigureOptions<IdentityOptionsSetup>();
 
@@ -64,18 +64,17 @@ namespace UserManagement.Api.Shared.Extensions
 
             services.ConfigureOptions<JwtOptionsSetup>();
 
-            services.AddSingleton<JwtHandler>();
+            services.TryAddScoped<JwtHandler>();
 
-            services.AddScoped<UserRepository>();
+            services.TryAddScoped<UserRepository>();
 
             return services;
         }
 
         private static IServiceCollection AddOtherServices(this IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Program).Assembly);
-
-
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
 
             return services;
         }

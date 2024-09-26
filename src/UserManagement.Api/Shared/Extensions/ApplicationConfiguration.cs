@@ -7,7 +7,7 @@ namespace UserManagement.Api.Shared.Extensions
 {
     public static class ApplicationConfiguration
     {
-        public static IApplicationBuilder CheckUsersSecurityStamp(this IApplicationBuilder app)
+        public static IApplicationBuilder UseUsersSecurityStampChecker(this IApplicationBuilder app)
         {
             app.UseMiddleware<ValidateSecurityStampMiddleware>();
 

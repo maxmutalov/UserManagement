@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserManagement.Api.Shared.DTO;
 using UserManagement.Api.Shared.Repositories;
 
@@ -13,6 +14,7 @@ namespace UserManagement.Api.Controllers
             _userRepository = userRepository;
         }
 
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser(UserForRegistrationDto userDto)
         {
@@ -26,6 +28,7 @@ namespace UserManagement.Api.Controllers
             return Ok(result.Value);
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser(UserForAuthenticationDto userDto)
         {

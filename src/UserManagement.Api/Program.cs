@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddSwaggerGen();
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.CustomSchemaIds(t => t.FullName?.Replace("+", "."));
+    });
 
     builder.Services.ConfigureServices(builder.Configuration);
 }
@@ -27,11 +30,13 @@ var app = builder.Build();
 
     app.UseSerilogRequestLogging();
 
-    app.UseExceptionHandler();
-
-    app.CheckUsersSecurityStamp();
+    //app.UseExceptionHandler();
 
     app.UseAuthentication();
+
+    app.UseAuthorization();
+
+    app.UseUsersSecurityStampChecker();
 
     app.MapControllers();
 

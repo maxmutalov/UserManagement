@@ -7,14 +7,14 @@ namespace UserManagement.Api.Shared.Middlewares
     public class ValidateSecurityStampMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly UserManager<User> _userManager;
+        private readonly IServiceScopeFactory _scopeFactory;
 
         public ValidateSecurityStampMiddleware(
             RequestDelegate next,
-            UserManager<User> userManager)
+            IServiceScopeFactory scopeFactory)
         {
             _next = next;
-            _userManager = userManager;
+            _scopeFactory = scopeFactory;
         }
 
 #pragma warning disable CS8602, CS8604
@@ -22,13 +22,15 @@ namespace UserManagement.Api.Shared.Middlewares
         {
             if (context.User.Identity.IsAuthenticated)
             {
+                using var scope = _scopeFactory.CreateScope();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 var tokenSecurityStamp = context.User.FindFirst("SecurityStamp")?.Value;
 
                 if (userId != null && tokenSecurityStamp != null)
                 {
-                    var user = await _userManager.FindByIdAsync(userId);
-                    var currentSecurityStamp = await _userManager.GetSecurityStampAsync(user);
+                    var user = await userManager.FindByIdAsync(userId);
+                    var currentSecurityStamp = await userManager.GetSecurityStampAsync(user);
 
                     if (currentSecurityStamp != tokenSecurityStamp)
                     {

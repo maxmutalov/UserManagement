@@ -12,7 +12,7 @@ namespace UserManagement.Api.Shared.Options
             options.Password.RequireNonAlphanumeric = false;
             options.Password.RequireUppercase = false;
             options.Password.RequireLowercase = false;
-            options.User.RequireUniqueEmail = true;
+            options.User.AllowedUserNameCharacters = String.Empty;
         }
     }
 }
