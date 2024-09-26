@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -36,12 +37,19 @@ namespace UserManagement.Api.Shared.Extensions
                 options.UseNpgsql(connectionString, options =>
                 {
                     options.MigrationsHistoryTable(HistoryRepository.DefaultTableName);
-                });
-                //.UseSnakeCaseNamingConvention();
+                })
+                .UseSnakeCaseNamingConvention();
             });
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddDbContext<DataProtectionKeyContext>(options =>
+                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+
+            services.AddDataProtection()
+                .PersistKeysToDbContext<DataProtectionKeyContext>()
+                .SetApplicationName("UserManagement.Api");
 
             services.ConfigureOptions<IdentityOptionsSetup>();
 

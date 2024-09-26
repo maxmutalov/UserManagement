@@ -32,6 +32,7 @@ namespace UserManagement.Api.Shared.Authentication
 
         private SigningCredentials GetSigningCredentials()
         {
+            //B66B05B5-7E2F-4FAE-BEB2-0A2B2D6C
             var key = Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey);
             var secret = new SymmetricSecurityKey(key);
 
@@ -51,9 +52,9 @@ namespace UserManagement.Api.Shared.Authentication
 
             var claims = new List<Claim>()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Email!),
                 new Claim("SecurityStamp", securityStamp)
             };
 

@@ -18,9 +18,13 @@ namespace UserManagement.Api.Shared.Extensions
         {
             using var scope = app.ApplicationServices.CreateScope();
 
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var identityDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            dbContext.Database.Migrate();
+            var dataProtectionKeyContext = scope.ServiceProvider.GetRequiredService<DataProtectionKeyContext>();
+
+            //identityDbContext.Database.Migrate();
+
+            dataProtectionKeyContext.Database.Migrate();
 
             return app;
         }

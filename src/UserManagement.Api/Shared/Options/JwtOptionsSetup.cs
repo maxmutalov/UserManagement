@@ -6,7 +6,7 @@ using UserManagement.Api.Shared.Authentication;
 
 namespace UserManagement.Api.Shared.Options
 {
-    public class JwtOptionsSetup : IConfigureOptions<JwtBearerOptions>
+    public class JwtOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
     {
         private readonly JwtSettings _jwtSettings;
 
@@ -29,6 +29,11 @@ namespace UserManagement.Api.Shared.Options
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey))
             };
+        }
+
+        public void Configure(string? name, JwtBearerOptions options)
+        {
+            Configure(options);
         }
     }
 }

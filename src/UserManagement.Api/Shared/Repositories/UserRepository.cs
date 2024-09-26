@@ -124,12 +124,14 @@ namespace UserManagement.Api.Shared.Repositories
 
         public async Task<Result<List<User>>> GetAllUsersAsync()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = _userManager.Users;
+
+            List<User> usersList = await users.ToListAsync();
 
             if (users == null)
                 return Result.Failure<List<User>>(CustomError.UsersNotFound);
 
-            return users;
+            return usersList;
         }
     }
 }

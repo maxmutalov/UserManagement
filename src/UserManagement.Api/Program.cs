@@ -23,14 +23,14 @@ var app = builder.Build();
         app.UseSwagger();
         app.UseSwaggerUI();
 
-        app.ApplyMigrations();
+        //app.ApplyMigrations();
     }
 
     app.UseHttpsRedirection();
 
     app.UseSerilogRequestLogging();
 
-    //app.UseExceptionHandler();
+    app.UseExceptionHandler();
 
     app.UseAuthentication();
 
