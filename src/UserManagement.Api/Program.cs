@@ -40,6 +40,8 @@ var app = builder.Build();
 
     app.MapControllers();
 
+    app.UseCors("BlazorApp");
+
     app.Run();
 }
 

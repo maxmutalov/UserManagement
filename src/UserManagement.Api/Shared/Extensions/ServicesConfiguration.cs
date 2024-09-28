@@ -84,6 +84,10 @@ namespace UserManagement.Api.Shared.Extensions
             services.AddExceptionHandler<GlobalExceptionHandler>();
             services.AddProblemDetails();
 
+            services.AddCors();
+
+            services.ConfigureOptions<CorsOptionsSetup>();
+
             return services;
         }
     }

@@ -8,13 +8,16 @@ namespace UserManagement.Api.Shared.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IServiceScopeFactory _scopeFactory;
+        private readonly ILogger<ValidateSecurityStampMiddleware> _logger;
 
         public ValidateSecurityStampMiddleware(
             RequestDelegate next,
-            IServiceScopeFactory scopeFactory)
+            IServiceScopeFactory scopeFactory,
+            ILogger<ValidateSecurityStampMiddleware> logger)
         {
             _next = next;
             _scopeFactory = scopeFactory;
+            _logger = logger;
         }
 
 #pragma warning disable CS8602, CS8604
@@ -22,6 +25,7 @@ namespace UserManagement.Api.Shared.Middlewares
         {
             if (context.User.Identity.IsAuthenticated)
             {
+                _logger.LogInformation("Users security stamp is being validated.");
                 using var scope = _scopeFactory.CreateScope();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -32,12 +36,13 @@ namespace UserManagement.Api.Shared.Middlewares
                     var user = await userManager.FindByIdAsync(userId);
                     var currentSecurityStamp = await userManager.GetSecurityStampAsync(user);
 
-                    if (currentSecurityStamp != tokenSecurityStamp)
+                    if (currentSecurityStamp != tokenSecurityStamp && user.IsBlocked)
                     {
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         return;
                     }
                 }
+                _logger.LogInformation("Users security stamp validation ended.");
             }
 
             await _next(context);

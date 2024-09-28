@@ -7,7 +7,8 @@ namespace UserManagement.Api.Shared.Middlewares
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
 
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+        public GlobalExceptionHandler(
+            ILogger<GlobalExceptionHandler> logger)
         {
             _logger = logger;
         }

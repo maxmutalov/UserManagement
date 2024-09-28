@@ -12,21 +12,26 @@ namespace UserManagement.Api.Shared.Authentication
     {
         private readonly JwtSettings _jwtSettings;
         private readonly UserManager<User> _userManager;
+        private readonly ILogger<JwtHandler> _logger;
 
         public JwtHandler(
             IOptions<JwtSettings> jwtSettings,
-            UserManager<User> userManager)
+            UserManager<User> userManager,
+            ILogger<JwtHandler> logger)
         {
             _jwtSettings = jwtSettings.Value;
             _userManager = userManager;
+            _logger = logger;
         }
 
         public async Task<String> CreateTokenAsync(User user)
         {
+            _logger.LogInformation("JwtHandler.CreateTokenAsync is starting creating JWT token.");
             var signingCredentials = GetSigningCredentials();
             var claims = await GetClaimsAsync(user);
             var tokenOptions = GenerateTokenOptions(signingCredentials, claims);
 
+            _logger.LogInformation("JwtHandler.CreateTokenAsync ended.");
             return new JwtSecurityTokenHandler().WriteToken(tokenOptions);
         }
 
